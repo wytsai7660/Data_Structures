@@ -58,7 +58,7 @@ int main() {
     putchar('\n');
   }
   for (unsigned i = 0, rand = rand_between(0, MAX_PATHES_NUM - 1); i < 4; i++, rand = rand_between(0, MAX_PATHES_NUM - 1)) {
-    printf("%u %u%c", pathes[rand][0], pathes[rand][1], i & 1 ? '\n' : ' ');
+    printf("%u %u%c", pathes[rand][1], N - pathes[rand][0] - 1, i & 1 ? '\n' : ' ');
   }
   // problem generation ends here
 
