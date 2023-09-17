@@ -1,3 +1,1 @@
-   // if (pathes_num == MAX_PATHES_NUM) {
-    //   printf("trash check\n");
-    // }
+ (maze[ball_1[1] + direction[dir][1]][ball_1[0] + direction[dir][0]] != '1') {
