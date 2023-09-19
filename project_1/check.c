@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
+const char *dir_name[4] = {"up", "right", "down", "left"};
 
 const int direction[4][2] = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
 
@@ -41,6 +44,7 @@ int main() {
 
   int dir;
   while (scanf("%1d", &dir) != EOF) {
+    printf("\nmove %s\n", dir_name[dir]);
     if (maze[ball_1[1] + direction[dir][1]][ball_1[0] + direction[dir][0]] != '1') {
       ball_1[0] += direction[dir][0], ball_1[1] += direction[dir][1];
       if (maze[ball_1[1]][ball_1[0]] == '3') maze[ball_1[1]][ball_1[0]] = '4', ball_1[0] = ball_1[1] = n;
