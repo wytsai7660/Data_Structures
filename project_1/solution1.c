@@ -1,67 +1,56 @@
-// solution1: BFS two times, one for each ball
-
-#include <ctype.h>
 #include <stdio.h>
-#include <stdlib.h>
 
-// y ^
-//   |             up(0)
-//   |              |
-//   |   left(3) -- + -- right(1)
-//   |              |
-//   |            down(2)
-//   |
-//   + ----------------------> x
-const int direction[4][2] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+// typedef struct {
+//   int x, y, from_dir;
+//   int *ans;
+// } Point;
 
-typedef struct {
+typedef struct __Node__ {
   int x, y, from_dir;
-} point;
+  int *ans;
+  struct __Node__ *next;
+} Node;
 
 typedef struct {
-  point *data;
-  int head, size, capacity;
-} queue;  // circular queue with fixed capacity (the should be no more than capacity elements in the queue)
+  Node *head, *tail;
+  int size;
+} Queue;
 
-queue *new_queue(int capacity) {
-  queue *q = malloc(sizeof(queue));
-  if (q == NULL) {
-    printf("queue: failed to allocate memory for queue (tried to allocate %u bytes)\n", sizeof(queue));
+Queue *new_queue() {
+  Queue *tmp_q = malloc(sizeof(Queue));
+  *tmp_q = (Queue){NULL, NULL, 0};
+  return tmp_q;
+}
+
+void queue_push(Queue *queue, Point point) {
+  Node *tmp_node = malloc(sizeof(Node));
+  *tmp_node = (Node){point, NULL};
+  if (queue->size == 0) {
+    queue->head = queue->tail = tmp_node;
+  } else {
+    queue->tail->next = tmp_node;
+    queue->tail = tmp_node;
+  }
+  queue->size++;
+}
+
+Point queue_pop(Queue *queue) {
+  if (queue->size == 0) {
+    printf("queue: attempt to pop an element from an empty queue\n");
     exit(1);
   }
-  *q = (queue){malloc(capacity * sizeof(point)), 0, 0, capacity};
-  if (q->data == NULL) {
-    printf("queue: failed to allocate memory for queue.data (tried to allocate %u bytes)\n", capacity * sizeof(point));
-    exit(1);
+  if (queue->size == 1) {  // head == tail
+    free(queue->head);
+    queue->head = queue->tail = NULL;
   }
-  return q;
-}
+  Point tmp_Point free(queue->head);
 
-point queue_front(queue *q) {
-  if (q->size == 0) {
-    printf("queue: attempt to get front element of an empty queue\n");
-    exit(1);
-  }
-  return q->data[q->head];
-}
-
-point queue_pop(queue *q) {  // FIXME //TODO: rewrite this function
-  if (q->head >= q->capacity) q->head = 0;
-  q->size--;
-  return q->data[q->head++];
-}
-
-void queue_push(queue *q, point p) {
-  if (q->size == q->capacity) {
-    printf("queue: attempt to push an element to a full queue, popping the front element to resolve\n");
-    queue_pop(q);
-  }
-  q->data[(q->head + (q->size++)) % q->capacity] = p;
-}
-
-void queue_clear(queue *q) {
-  free(q->data);
-  free(q);
+  // Point tmp_point = queue->head->data;
+  // Node *tmp_node = queue->head;
+  // queue->head = queue->head->next;
+  // free(tmp_node);
+  queue->size--;
+  // return tmp_point;
 }
 
 int main() {
@@ -75,23 +64,23 @@ int main() {
 
   int tmp_1, tmp_2;  // used to temporarily store the input
   scanf("%d%d", &tmp_1, &tmp_2);
-  point ball_1 = (point){tmp_1, tmp_2, -1};  // set the ball
+  Point ball_1 = (Point){tmp_1, tmp_2, -1};  // set the ball
 
   scanf("%d%d", &tmp_1, &tmp_2);
-  point ball_2 = (point){tmp_1, tmp_2, -1};  // set the ball
-
-  scanf("%d%d", &tmp_1, &tmp_2);
-  maze[tmp_2][tmp_1] = 'D';  // set the destination
+  Point ball_2 = (Point){tmp_1, tmp_2, -1};  // set the ball
 
   scanf("%d%d", &tmp_1, &tmp_2);
   maze[tmp_2][tmp_1] = 'D';  // set the destination
 
-  queue *q = new_queue(n * n);
+  scanf("%d%d", &tmp_1, &tmp_2);
+  maze[tmp_2][tmp_1] = 'D';  // set the destination
+
+  Queue *q = new_queue(n * n);
   queue_push(q, ball_1);
 
   int x, y;
   while (q->size) {  // BFS for the first ball (two destinations are ok)
-    point p = queue_pop(q);
+    Point p = queue_pop(q);
     for (int dir = 0; dir < 4; dir++) {            // try to move in each directionß
       if (dir != 3 - p.from_dir &&                 // not going back
           (x = p.x + direction[dir][0]) != '1' &&  //
@@ -99,7 +88,7 @@ int main() {
         // int x = p.x + direction[dir][0], y = p.y + direction[dir][1];
         // if (x >= 0 && x < n && y >= 0 && y < n && maze[y][x] != 'X') {
         //   maze[y][x] = 'X';
-        //   queue_push(q, (point){x, y, dir});
+        //   queue_push(q, (Point){x, y, dir});
         // }
       }
     }
