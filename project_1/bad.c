@@ -1,11 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int main() {
-  void *x = malloc(10);
-  x = NULL;
-  //   char *x = (char *)malloc(10 * sizeof(char *));
-  //   free(x);
-  //   return x[5];
-  printf("%p\n", x);
+int main(void) {
+  int arr[10] = {};
+  int i = 0;
+  arr[i] = i++; /* 未定义行为 */
 }
