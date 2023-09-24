@@ -4,7 +4,7 @@
 #include <string.h>
 #include <time.h>
 
-#define N 45  // row & col
+#define N 499  // row & col
 
 #define MAX_PATHES_NUM (N * N - N - N + 1) / 2
 unsigned pathes[MAX_PATHES_NUM][2];  // save for later use
