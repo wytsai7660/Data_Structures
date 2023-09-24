@@ -1,6 +1,11 @@
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+// #define int long long
+// #define unsigned unsigned long long
+// #define i32 int
 
 const char *dir_name[4] = {"up", "right", "down", "left"};
 
@@ -21,14 +26,26 @@ void print_maze(char **maze, int n, int *ball_1, int *ball_2) {
 
 int main() {
   int n;
-  scanf("%d\n", &n);
+  scanf("%d", &n);
   char **maze = malloc((unsigned)(n + 3) * sizeof(char *));
   for (int row = 0; row < n + 3; row++) maze[row] = memset(malloc((unsigned)(n + 3) * sizeof(char)), '1', (unsigned)(n + 3));
 
   for (int y = n - 1; y >= 0; y--) {
-    for (int x = 0; x < n; x++) scanf("%c ", &maze[y][x]);
+    for (int x = 0; x < n; x++) {
+      while (isspace(maze[y][x] = getchar()))
+        ;
+      // do {
+      //   scanf("%c", &maze[y][x]);
+      // } while (isspace(maze[y][x]));
+    }
   }
 
+  for (int y = n - 1; y >= 0; y--) {
+    for (int x = 0; x < n; x++) printf("%c ", maze[y][x]);
+    printf("\n");
+  }
+
+  printf("finish scanning maze\n");
   int ball_1[2], ball_2[2];  // ball[x/y]
 
   int a, b;

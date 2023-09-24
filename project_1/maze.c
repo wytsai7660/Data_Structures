@@ -4,7 +4,7 @@
 #include <string.h>
 #include <time.h>
 
-#define N 11  // row & col
+#define N 45  // row & col
 
 #define MAX_PATHES_NUM (N * N - N - N + 1) / 2
 unsigned pathes[MAX_PATHES_NUM][2];  // save for later use
@@ -54,7 +54,7 @@ int main() {
   generate(maze, rand_between(0, N - 2) | 1, rand_between(0, N - 2) | 1, rand_between(0, 3));
   printf("%u\n", N);
   for (unsigned row = 0; row < N; row++) {
-    for (unsigned col = 0; col < N; col++) printf("%c ", maze[row][col] ? '@' : ' ');
+    for (unsigned col = 0; col < N; col++) printf("%c ", maze[row][col] ? '1' : '0');
     putchar('\n');
   }
   for (unsigned i = 0, rand = rand_between(0, MAX_PATHES_NUM - 1); i < 4; i++, rand = rand_between(0, MAX_PATHES_NUM - 1)) {
