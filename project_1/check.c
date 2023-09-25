@@ -59,8 +59,10 @@ int main() {
 
   print_maze(maze, n, ball_1, ball_2);
 
+  int score = 0;
   int dir;
   while (scanf("%1d", &dir) != EOF) {
+    score++;
     printf("\nmove %s\n", dir_name[dir]);
     if (maze[ball_1[1] + direction[dir][1]][ball_1[0] + direction[dir][0]] != '1') {
       ball_1[0] += direction[dir][0], ball_1[1] += direction[dir][1];
@@ -70,8 +72,9 @@ int main() {
       ball_2[0] += direction[dir][0], ball_2[1] += direction[dir][1];
       if (maze[ball_2[1]][ball_2[0]] == '3') maze[ball_2[1]][ball_2[0]] = '4', ball_2[0] = ball_2[1] = n;
     }
-    print_maze(maze, n, ball_1, ball_2);
+    // print_maze(maze, n, ball_1, ball_2);
   }
+  printf("score: %d\n", score);
 
   for (int row = 0; row < n + 3; row++) free(maze[row]);
   free(maze);
