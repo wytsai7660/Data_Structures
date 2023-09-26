@@ -108,15 +108,16 @@ int main() {
   scanf("%d", &n);
 
   char **maze = malloc((unsigned)(n + 2) * sizeof(char *));
-  for (int row = 0; row < n; row++) maze[row] = memset(malloc((unsigned)(n + 2) * sizeof(char)), '1', (unsigned)(n + 2) * sizeof(char));  // initialize the maze with walls
+  for (int row = 0; row < n + 2; row++) maze[row] = malloc((unsigned)(n + 2) * sizeof(char));
 
   for (int y = n - 1; y >= 0; y--)  // read the maze
     for (int x = 0; x < n; x++)
-      while (isspace(maze[y][x] = getchar()))
-        ;
-  // scanf("%c ", &maze[y][x]);
+      while (isspace(maze[y][x] = (char)getchar())) continue;
 
-  Status status = {.ans = NULL, .ans_len = 0};  // initialize status, later used to try to emulate the movement
+  for (int y = n - 1; y < n + 2; y++)  // ball trap for finished balls
+    for (int x = n - 1; x < n + 2; x++) maze[y][x] = '1';
+
+  Status status = {.des_1_active = true, .des_2_active = true, .ans = NULL, .ans_len = 0};  // initialize status, later used to try to emulate the movement
 
   scanf("%d%d%d%d", &status.ball_1.x, &status.ball_1.y, &status.ball_2.x, &status.ball_2.y);  //
 
@@ -125,6 +126,7 @@ int main() {
   maze[des_1.y][des_1.x] = 'D', maze[des_2.y][des_2.x] = 'D';
 
   // input area ends here
+  printf("read ok\n");
 
   Queue *queue = new_queue();
   queue_push(queue, status);
@@ -132,7 +134,7 @@ int main() {
   // printf("(+) pushing (1, 1, -1) ans: \n");
 
   // int *ans, ans_len;
-  // int x, y;
+
   int move_back;
   bool continue_loop = true;
 
@@ -146,19 +148,27 @@ int main() {
       //                   working_status.des_2_active,
       //                   malloc(((unsigned)working_status.ans_len + 1) * sizeof(int)),
       //                   working_status.ans_len + 1};  // try to perform the movement
-      status = (Status){(coordinate){working_status.ball_1.x + direction[dir][0], working_status.ball_1.y + direction[dir][1]}, (coordinate){working_status.ball_2.x + direction[dir][0], working_status.ball_2.y + direction[dir][1]},  //
-                        working_status.des_1_active, working_status.des_2_active,                                                                                                                                                        //
-                        .ans_len = working_status.ans_len + 1};                                                                                                                                                                          // try to perform the movement
+
+      // status = (Status){(coordinate){working_status.ball_1.x + direction[dir][0], working_status.ball_1.y + direction[dir][1]}, (coordinate){working_status.ball_2.x + direction[dir][0], working_status.ball_2.y + direction[dir][1]},  //
+      //                   working_status.des_1_active, working_status.des_2_active,                                                                                                                                                        //
+      //                   .ans_len = working_status.ans_len + 1};                                                                                                                                                                          // try to perform the movement
+
+      status.ball_1 = (coordinate){working_status.ball_1.x + direction[dir][0], working_status.ball_1.y + direction[dir][1]};
+      status.ball_2 = (coordinate){working_status.ball_2.x + direction[dir][0], working_status.ball_2.y + direction[dir][1]};
+      status.des_1_active = working_status.des_1_active;  // TODO: maybe not necessary?
+      status.des_2_active = working_status.des_2_active;
+      status.ans_len = working_status.ans_len + 1;
 
       move_back = 0;
       if (maze[status.ball_1.y][status.ball_1.x] == '1') status.ball_1.x = working_status.ball_1.x, status.ball_1.y = working_status.ball_1.y, move_back++;  // invalid (wall), reset the ball's position
       if (maze[status.ball_2.y][status.ball_2.x] == '1') status.ball_2.x = working_status.ball_2.x, status.ball_2.y = working_status.ball_2.y, move_back++;  // invalid (wall), reset the ball's position
       if (move_back == 2) {                                                                                                                                  // not a meaningful movement, skip
-        free(status.ans);
+        // free(status.ans);
         continue;
       }
 
       status.ans = malloc((unsigned)status.ans_len * sizeof(int));
+      // status.ans = NULL;
       if (working_status.ans != NULL) memcpy(status.ans, working_status.ans, (unsigned)working_status.ans_len * sizeof(int));
       status.ans[status.ans_len - 1] = dir;  // record the movement
 
@@ -173,6 +183,8 @@ int main() {
 
       if (!(status.des_1_active || status.des_2_active)) {
         printf("Finished!\n");
+        // if (status.ans == NULL) printf("NULL\n");
+        // else
         for (int i = 0; i < status.ans_len; i++) printf("%d", status.ans[i]);
         printf("\n");
         free(status.ans);
@@ -187,7 +199,7 @@ int main() {
       // printf("\n");
       // sleep(1);
     }
-    free(working_status.ans);
+    if (working_status.ans != NULL) free(working_status.ans);  // TODO: maybe not necessary?
   }
 
   // debug log
@@ -204,6 +216,6 @@ int main() {
 
   // free(ans);
   queue_clear(queue);
-  for (int row = 0; row < n; row++) free(maze[row]);
+  for (int row = 0; row < n + 2; row++) free(maze[row]);
   free(maze);
 }
