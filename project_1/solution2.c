@@ -160,6 +160,7 @@ int main() {
 
       status.ans = malloc((unsigned)status.ans_len * sizeof(int));
       if (working_status.ans != NULL) memcpy(status.ans, working_status.ans, (unsigned)working_status.ans_len * sizeof(int));
+      status.ans[status.ans_len - 1] = dir;  // record the movement
 
       if (maze[status.ball_1.y][status.ball_1.x] == 'D') {  // check if ball_1 has reached the destination
         if (status.des_1_active && status.ball_1.x == des_1.x && status.ball_1.y == des_1.y) status.des_1_active = false, status.ball_1.x = status.ball_1.y = n;
@@ -170,7 +171,14 @@ int main() {
         else if (status.des_2_active && status.ball_2.x == des_2.x && status.ball_2.y == des_2.y) status.des_2_active = false, status.ball_2.x = status.ball_2.y = n;
       }
 
-      if (!(status.des_1_active || status.des_2_active)) printf("Finished!\n");
+      if (!(status.des_1_active || status.des_2_active)) {
+        printf("Finished!\n");
+        for (int i = 0; i < status.ans_len; i++) printf("%d", status.ans[i]);
+        printf("\n");
+        free(status.ans);
+        continue_loop = false;
+        break;
+      }
 
       queue_push(queue, status);
 
@@ -179,7 +187,7 @@ int main() {
       // printf("\n");
       // sleep(1);
     }
-    free(working_point.ans);
+    free(working_status.ans);
   }
 
   // debug log
@@ -190,11 +198,11 @@ int main() {
 
   // debug log
   // printf("ans_len: %d\n", ans_len);
-  for (int i = 0; i < ans_len; i++) printf("%d", ans[i]);
+  // for (int i = 0; i < ans_len; i++) printf("%d", ans[i]);
   // printf("\n");
   //
 
-  free(ans);
+  // free(ans);
   queue_clear(queue);
   for (int row = 0; row < n; row++) free(maze[row]);
   free(maze);
