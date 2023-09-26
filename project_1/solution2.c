@@ -217,5 +217,5 @@ int main() {
   // free(ans);
   queue_clear(queue);
   for (int row = 0; row < n + 2; row++) free(maze[row]);
-  free(maze);
+  free(maze);  //
 }
