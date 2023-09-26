@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>  // for sleep()
 
 // #define int long long
 // #define unsigned unsigned long long
@@ -126,7 +127,7 @@ int main() {
   maze[des_1.y][des_1.x] = 'D', maze[des_2.y][des_2.x] = 'D';
 
   // input area ends here
-  printf("read ok\n");
+  // printf("read ok\n");
 
   Queue *queue = new_queue();
   queue_push(queue, status);
@@ -167,36 +168,34 @@ int main() {
         continue;
       }
 
-      status.ans = malloc((unsigned)status.ans_len * sizeof(int));
-      // status.ans = NULL;
-      if (working_status.ans != NULL) memcpy(status.ans, working_status.ans, (unsigned)working_status.ans_len * sizeof(int));
-      status.ans[status.ans_len - 1] = dir;  // record the movement
-
       if (maze[status.ball_1.y][status.ball_1.x] == 'D') {  // check if ball_1 has reached the destination
-        if (status.des_1_active && status.ball_1.x == des_1.x && status.ball_1.y == des_1.y) status.des_1_active = false, status.ball_1.x = status.ball_1.y = n;
-        else if (status.des_2_active && status.ball_1.x == des_2.x && status.ball_1.y == des_2.y) status.des_2_active = false, status.ball_1.x = status.ball_1.y = n;
+        if (status.des_1_active && status.ball_1.x == des_1.x && status.ball_1.y == des_1.y) status.des_1_active = false, status.ball_1.x = status.ball_1.y = n, maze[status.ball_1.y][status.ball_1.x] = '0';
+        else if (status.des_2_active && status.ball_1.x == des_2.x && status.ball_1.y == des_2.y) status.des_2_active = false, status.ball_1.x = status.ball_1.y = n, maze[status.ball_1.y][status.ball_1.x] = '0';
       }
       if (maze[status.ball_2.y][status.ball_2.x] == 'D') {  // check if ball_2 has reached the destination
-        if (status.des_1_active && status.ball_2.x == des_1.x && status.ball_2.y == des_1.y) status.des_1_active = false, status.ball_2.x = status.ball_2.y = n;
-        else if (status.des_2_active && status.ball_2.x == des_2.x && status.ball_2.y == des_2.y) status.des_2_active = false, status.ball_2.x = status.ball_2.y = n;
+        if (status.des_1_active && status.ball_2.x == des_1.x && status.ball_2.y == des_1.y) status.des_1_active = false, status.ball_2.x = status.ball_2.y = n, maze[status.ball_2.y][status.ball_2.x] = '0';
+        else if (status.des_2_active && status.ball_2.x == des_2.x && status.ball_2.y == des_2.y) status.des_2_active = false, status.ball_2.x = status.ball_2.y = n, maze[status.ball_2.y][status.ball_2.x] = '0';
       }
 
       if (!(status.des_1_active || status.des_2_active)) {
-        printf("Finished!\n");
+        // printf("Finished!\n");
         // if (status.ans == NULL) printf("NULL\n");
         // else
-        for (int i = 0; i < status.ans_len; i++) printf("%d", status.ans[i]);
-        printf("\n");
-        free(status.ans);
+        for (int i = 0; i < working_status.ans_len; i++) printf("%d", working_status.ans[i]);
+        printf("%d\n", dir);
         continue_loop = false;
         break;
       }
 
+      status.ans = malloc((unsigned)status.ans_len * sizeof(int));
+      if (working_status.ans != NULL) memcpy(status.ans, working_status.ans, (unsigned)working_status.ans_len * sizeof(int));
+      status.ans[status.ans_len - 1] = dir;  // record the movement
+
       queue_push(queue, status);
 
-      // printf("(+) pushing (%d, %d, %d) ans: ", tmp_point.x, tmp_point.y, tmp_point.from_dir);
-      // for (int i = 0; i < tmp_point.ans_len; i++) printf("%d", tmp_point.ans[i]);
-      // printf("\n");
+      printf("(+) pushing (%d, %d), (%d, %d), ans_len: %d,\tans: ", status.ball_1.x, status.ball_1.y, status.ball_2.x, status.ball_1.y, status.ans_len);
+      for (int i = 0; i < status.ans_len; i++) printf("%d", status.ans[i]);
+      printf("\n");
       // sleep(1);
     }
     if (working_status.ans != NULL) free(working_status.ans);  // TODO: maybe not necessary?

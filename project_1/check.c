@@ -72,7 +72,7 @@ int main() {
       ball_2[0] += direction[dir][0], ball_2[1] += direction[dir][1];
       if (maze[ball_2[1]][ball_2[0]] == '3') maze[ball_2[1]][ball_2[0]] = '4', ball_2[0] = ball_2[1] = n;
     }
-    // print_maze(maze, n, ball_1, ball_2);
+    print_maze(maze, n, ball_1, ball_2);
   }
   printf("score: %d\n", score);
 
