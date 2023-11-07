@@ -41,9 +41,7 @@ bool reorder(int *const original, const int *const original_dest) {
 }
 
 int find_longest_segments(Segment *segments, Segment *result, int seg_count) {
-  int *DP = calloc((unsigned)seg_count, sizeof(int));
-
-  int *from = memset(malloc(sizeof(int) * (unsigned)seg_count), -1, sizeof(int) * (unsigned)seg_count);
+  int *DP = calloc((unsigned)seg_count, sizeof(int)), *from = memset(malloc(sizeof(int) * (unsigned)seg_count), -1, sizeof(int) * (unsigned)seg_count);
 
   int max_length = 0, end_index = -1;
 
@@ -60,8 +58,6 @@ int find_longest_segments(Segment *segments, Segment *result, int seg_count) {
     end_index = from[end_index];
   }
 
-  // printf("3\n");
-
   free(DP);
   free(from);
   return count;
@@ -69,18 +65,16 @@ int find_longest_segments(Segment *segments, Segment *result, int seg_count) {
 
 void shortcut_phase(bool *removed) {
   Segment *segments = malloc(sizeof(Segment) * (unsigned)merged_n);
-  int count = 0;
 
-  for (int i = 0; i < merged_n; i++) {
-    if (new_dest[i] > i && !updated[i]) segments[count].begin = i, segments[count++].end = new_dest[i];
-  }
+  int seg_count = 0;
+  for (int i = 0; i < merged_n; i++)
+    if (new_dest[i] > i && !updated[i]) segments[seg_count].begin = i, segments[seg_count++].end = new_dest[i];
 
-  Segment *result = malloc(sizeof(Segment) * (unsigned)count);
-  count = find_longest_segments(segments, result, count);
+  Segment *result = malloc(sizeof(Segment) * (unsigned)seg_count);
+  seg_count = find_longest_segments(segments, result, seg_count);
 
-  for (int i = 0; i < count; i++) {
-    new[result[i].begin] = result[i].end;
-    updated[result[i].begin] = true;
+  for (int i = 0; i < seg_count; i++) {
+    new[result[i].begin] = result[i].end, updated[result[i].begin] = true;
     for (int j = result[i].begin + 1; j < result[i].end; j++) removed[j] = true;
   }
 
