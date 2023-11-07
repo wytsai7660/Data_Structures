@@ -52,10 +52,7 @@ int find_longest_segments(Segment *segments, Segment *result, int seg_count) {
   }
 
   int count = 0;
-  while (end_index >= 0) {
-    result[count++] = segments[end_index];
-    end_index = from[end_index];
-  }
+  while (end_index >= 0) result[count++] = segments[end_index], end_index = from[end_index];
 
   free(DP);
   free(from);
@@ -145,8 +142,7 @@ int main() {
   }
 
   bool *removed = malloc(sizeof(bool) * (unsigned)merged_n);
-  for (int round = 1, updated_count = 0; updated_count < merged_n - 1; round++) {  // TODO
-
+  for (int round = 1, updated_count = 0; updated_count < merged_n - 1; round++) {
     if (round & 1) {
       memset(removed, 0, sizeof(bool) * (unsigned)merged_n);
 
