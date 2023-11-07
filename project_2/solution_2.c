@@ -42,7 +42,6 @@ bool reorder(int *const original, const int *const original_dest) {
 
 int find_longest_segments(Segment *segments, Segment *result, int seg_count) {
   int *DP = calloc((unsigned)seg_count, sizeof(int)), *from = memset(malloc(sizeof(int) * (unsigned)seg_count), -1, sizeof(int) * (unsigned)seg_count);
-
   int max_length = 0, end_index = -1;
 
   for (int i = 0; i < seg_count; i++) {
@@ -154,19 +153,12 @@ int main() {
       shortcut_phase(removed);
 
       for (int i = 0; i < merged_n; i++)
-        if (updated[i]) {
-          original[reverse_reorder_table[i]] = original_dest[reverse_reorder_table[i]];
-        }
-
+        if (updated[i]) original[reverse_reorder_table[i]] = original_dest[reverse_reorder_table[i]];
       store_ans(original);
-
     } else {
       prune_phase(removed);
-
-      for (int i = 0; i < merged_n; i++) updated[i] |= removed[i];
-
       for (int i = 0; i < merged_n; i++)
-        if (updated[i]) original[reverse_reorder_table[i]] = original_dest[reverse_reorder_table[i]];
+        if (updated[i] |= removed[i]) original[reverse_reorder_table[i]] = original_dest[reverse_reorder_table[i]];
       store_ans(original);
     }
     updated_count = 0;
