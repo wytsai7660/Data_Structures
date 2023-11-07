@@ -251,7 +251,7 @@ int main() {
 
   {
     bool black = false;
-    for (int i = 0; i < merged_n; i++) {
+    for (int i = 0; i < n; i++) {
       if (original[i] != original_dest[i]) {
         black = true;
         break;
