@@ -68,8 +68,9 @@ bool reorder(int *const original, const int *const original_dest) {
 }
 
 int find_longest_segments(Segment *segments, Segment *result, int seg_count) {
-  int *DP = calloc((unsigned)seg_count, sizeof(int)),  //
-      *from = memset(malloc(sizeof(int) * (unsigned)seg_count), -1, sizeof(int) * (unsigned)merged_n);
+  int *DP = calloc((unsigned)seg_count, sizeof(int));
+
+  int *from = memset(malloc(sizeof(int) * (unsigned)seg_count), -1, sizeof(int) * (unsigned)seg_count);
 
   // printf("from: \n");
   // for (int i = 0; i < merged_n; i++) printf("%d ", from[i]);
@@ -138,43 +139,32 @@ void shortcut_phase(bool *removed) {
     for (int j = result[i].begin + 1; j < result[i].end; j++) removed[j] = true;
   }
 
-  // free(segments);
-  // free(result);
+  free(segments);
+  free(result);
 
   // printf("update new OK!\n");
 }
 
 void prune_phase(bool *removed) {
-  // int i = 0, flag = -1;
-  // printf("removed: \n");
-  // for (int i = 0; i < merged_n; i++) printf("%d ", removed[i] ? 1 : 0);
-  // printf("\n");
+  // for (int ptr = 0, flag = -1; ptr != merged_n - 1; ptr = new_dest[ptr]) {
+  //   // printf("working on %d\n", ptr);
+  //   if (removed[new_dest[ptr]] && flag == -1) {
+  //     flag = ptr;
 
-  // for (int i = 0, flag = -1; i != -1; i = new_dest[i]) {
-  //   printf("i: %d\n", i);
-  //   if (!removed[new_dest[i]]) {
-  //     printf("flag: %d, i: %d\n", flag, i);
-  //     continue;
-  //   }
-  //   if (flag != -1) {
-  //     // reverse_reorder_table[flag] = new_dest[i];
-  //     new_dest[flag] = new_dest[i];
+  //   } else if (flag != -1) {
+  //     // printf("flag: %d, ptr: %d\n", flag, ptr);
+  //     new_dest[flag] = new_dest[ptr];
   //     flag = -1;
-
-  //   } else {
-  //     flag = i;
   //   }
-  //   // i = new_dest[i];
   // }
   int ptr = 0, flag = -1;
-  while (ptr != -1) {
+  while (ptr != merged_n - 1) {
     if (removed[new_dest[ptr]]) {
       if (flag == -1) {
         flag = ptr;
       }
     } else {
       if (flag != -1) {
-        // printf("flag: %d, ptr: %d\n", flag, ptr);
         new_dest[flag] = new_dest[ptr];
         flag = -1;
       }
