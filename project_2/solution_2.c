@@ -5,21 +5,6 @@
 
 #define MAX_NODE 2000
 
-////////////////////////////////////////////////// stack //////////////////////////////////////////////////
-
-// typedef struct {
-//   int data[MAX_NODE + 5];
-//   int top_index;  // INFO: -1 for empty
-// } SimpleStack;    // just a very simple and basic stack
-
-// inline void SimpleStack_push(SimpleStack *stack, int value) { stack->data[++stack->top_index] = value; }  // NOTE: no full check, use with caution
-
-// inline int SimpleStack_pop(SimpleStack *stack) { return stack->data[(stack->top_index)--]; }  // NOTE: no empty check, use with caution
-
-// inline bool SimpleStack_is_empty(SimpleStack *stack) { return stack->top_index == -1; }
-
-////////////////////////////////////////////////// stack //////////////////////////////////////////////////
-
 typedef struct {
   int begin, end;
 } Segment;
@@ -52,18 +37,6 @@ bool reorder(int *const original, const int *const original_dest) {
     new_dest[index] = reorder_table[n - 1], new_dest[merged_n - 1] = -1;  // dest node
   }
 
-  // printf("reordered:\n");
-  // for (int i = 0; i < merged_n; i++) printf("%d ", new[i]);
-  // printf("\n");
-  // printf("reorder_table:\n");
-  // for (int i = 0; i < n; i++) printf("%d ", reorder_table[i]);
-  // printf("\n");
-  // printf("reverse_reorder_table:\n");
-  // for (int i = 0; i < merged_n; i++) printf("%d ", reverse_reorder_table[i]);
-  // printf("\n");
-  // printf("new_dest:\n");
-  // for (int i = 0; i < merged_n; i++) printf("%d ", new_dest[i]);
-  // printf("\n");
   return red;
 }
 
@@ -71,9 +44,6 @@ int find_longest_segments(Segment *segments, Segment *result, int seg_count) {
   int *DP = calloc((unsigned)seg_count, sizeof(int));
 
   int *from = memset(malloc(sizeof(int) * (unsigned)seg_count), -1, sizeof(int) * (unsigned)seg_count);
-
-  // printf("from: \n");
-  // for (int i = 0; i < merged_n; i++) printf("%d ", from[i]);
 
   int max_length = 0, end_index = -1;
 
@@ -84,16 +54,9 @@ int find_longest_segments(Segment *segments, Segment *result, int seg_count) {
     if (DP[i] > max_length) max_length = DP[i], end_index = i;
   }
 
-  // printf("\nfrom: \n");
-  // for (int i = 0; i < seg_count; i++) printf("%d ", from[i]);
-  // printf("\nDP: \n");
-  // for (int i = 0; i < seg_count; i++) printf("%d ", DP[i]);
-  // printf("Hi\n");
-
   int count = 0;
   while (end_index >= 0) {
     result[count++] = segments[end_index];
-    // printf("result[%d]: %d %d\n", count - 1, segments[end_index].begin, segments[end_index].end);
     end_index = from[end_index];
   }
 
@@ -108,30 +71,12 @@ void shortcut_phase(bool *removed) {
   Segment *segments = malloc(sizeof(Segment) * (unsigned)merged_n);
   int count = 0;
 
-  // printf("new_dest:\n");
-  // for (int i = 0; i < merged_n; i++) printf("%d ", new_dest[i]);
-  // printf("\n");
-  // printf("updated:\n");
-  // for (int i = 0; i < merged_n; i++) printf("%d ", updated[i] ? 1 : 0);
-  // printf("\n");
-
   for (int i = 0; i < merged_n; i++) {
-    // printf("i: %d\n", i);
-    // for (int j = 0; j < merged_n; j++) printf("%d ", updated[j] ? 1 : 0);
-    // printf("\n");
     if (new_dest[i] > i && !updated[i]) segments[count].begin = i, segments[count++].end = new_dest[i];
   }
 
-  // printf("count: %d\n", count);
-  // for (int i = 0; i < count; i++) printf("start: %d end: %d\n", segments[i].begin, segments[i].end);
-
   Segment *result = malloc(sizeof(Segment) * (unsigned)count);
   count = find_longest_segments(segments, result, count);
-  // printf("count: %d\n", count);
-  // for (int i = 0; i < count; i++) {
-  //   printf("start: %d end: %d\n", result[i].begin, result[i].end);
-  // }
-  // printf("DP OK!\n");
 
   for (int i = 0; i < count; i++) {
     new[result[i].begin] = result[i].end;
@@ -141,8 +86,6 @@ void shortcut_phase(bool *removed) {
 
   free(segments);
   free(result);
-
-  // printf("update new OK!\n");
 }
 
 void prune_phase(bool *removed) {
@@ -197,7 +140,7 @@ int main() {
 
   store_ans(original);  // 0
 
-  if (reorder(original, original_dest)) store_ans(original);
+  if (reorder(original, original_dest)) store_ans(original);  // red
 
   updated = calloc((unsigned)n, sizeof(bool) * (unsigned)merged_n);
 
@@ -213,36 +156,24 @@ int main() {
 
     if (round & 1) {
       memset(removed, 0, sizeof(bool) * (unsigned)merged_n);
-      // printf("1 OK!\n");
+
       shortcut_phase(removed);
-      // printf("2 OK!\n");
+
       for (int i = 0; i < merged_n; i++)
         if (updated[i]) {
-          // printf("i = %d\n", i);
           original[reverse_reorder_table[i]] = original_dest[reverse_reorder_table[i]];
         }
 
       store_ans(original);
 
-      // print_ans();
-      // printf("shortcut OK!\n");
-
     } else {
-      // printf("3 OK!\n");
       prune_phase(removed);
-      // printf("4 OK!\n");
 
       for (int i = 0; i < merged_n; i++) updated[i] |= removed[i];
 
       for (int i = 0; i < merged_n; i++)
         if (updated[i]) original[reverse_reorder_table[i]] = original_dest[reverse_reorder_table[i]];
       store_ans(original);
-      // pruned(result, removed);
-      // bitset_union(updated, updated, removed);
-      // bitset_copy(updates[round - 1], updated);
-      // printf("round %d pruned, updated: %d\n", round, bitset_count(updated));
-      // round++;
-      // printf("prune OK!\n");
     }
     updated_count = 0;
     for (int i = 0; i < merged_n; i++)
