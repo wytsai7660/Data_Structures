@@ -79,11 +79,11 @@ void shortcut_phase(bool *removed) {
 }
 
 void prune_phase(bool *removed) {
-  for (int ptr = 0, flag = -1; ptr != merged_n - 1; ptr = new_dest[ptr]) {
-    if (removed[new_dest[ptr]]) {
-      if (flag == -1) flag = ptr;
-    } else if (flag != -1) {
-      new_dest[flag] = new_dest[ptr], flag = -1;
+  for (int i = 0, src = -1; i != merged_n - 1; i = new_dest[i]) {
+    if (removed[new_dest[i]]) {
+      if (src == -1) src = i;
+    } else if (src != -1) {
+      new_dest[src] = new_dest[i], src = -1;
     }
   }
 }
@@ -127,9 +127,7 @@ int main() {
   for (int round = 1, updated_count = 0; updated_count < merged_n - 1; round++) {
     if (round & 1) {
       memset(removed, 0, sizeof(bool) * (unsigned)merged_n);
-
       shortcut_phase(removed);
-
       for (int i = 0; i < merged_n; i++)
         if (updated[i]) original[reverse_reorder_table[i]] = original_dest[reverse_reorder_table[i]];
       store_ans(original);
@@ -143,7 +141,6 @@ int main() {
     for (int i = 0; i < merged_n; i++)
       if (updated[i]) updated_count++;
   }
-
   {
     bool black = false;
     for (int i = 0; i < n; i++) {
