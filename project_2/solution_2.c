@@ -79,30 +79,12 @@ void shortcut_phase(bool *removed) {
 }
 
 void prune_phase(bool *removed) {
-  // for (int ptr = 0, flag = -1; ptr != merged_n - 1; ptr = new_dest[ptr]) {
-  //   // printf("working on %d\n", ptr);
-  //   if (removed[new_dest[ptr]] && flag == -1) {
-  //     flag = ptr;
-
-  //   } else if (flag != -1) {
-  //     // printf("flag: %d, ptr: %d\n", flag, ptr);
-  //     new_dest[flag] = new_dest[ptr];
-  //     flag = -1;
-  //   }
-  // }
-  int ptr = 0, flag = -1;
-  while (ptr != merged_n - 1) {
+  for (int ptr = 0, flag = -1; ptr != merged_n - 1; ptr = new_dest[ptr]) {
     if (removed[new_dest[ptr]]) {
-      if (flag == -1) {
-        flag = ptr;
-      }
-    } else {
-      if (flag != -1) {
-        new_dest[flag] = new_dest[ptr];
-        flag = -1;
-      }
+      if (flag == -1) flag = ptr;
+    } else if (flag != -1) {
+      new_dest[flag] = new_dest[ptr], flag = -1;
     }
-    ptr = new_dest[ptr];
   }
 }
 
