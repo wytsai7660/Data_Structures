@@ -261,13 +261,13 @@ int main() {
   }
   print_ans();
 
-  //   free(original);
-  //   free(original_dest);
-  //   free(new);
-  //   free(new_dest);
-  //   free(reorder_table);
-  //   free(reverse_reorder_table);
+  free(original);
+  free(original_dest);
+  free(new);
+  free(new_dest);
+  free(reorder_table);
+  free(reverse_reorder_table);
 
-  //   free(removed);
-  //   free(updated);
+  free(removed);
+  free(updated);
 }
